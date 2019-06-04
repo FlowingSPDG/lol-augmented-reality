@@ -3,6 +3,8 @@
   
 ### Author : Shugo "FlowingSPDG" Kawamura
 
+Working sample : https://www.youtube.com/watch?v=04IWwbfTpbA&feature=youtu.be  
+
 NOTE : You need to enable ReplayAPI by editing `C:\Riot Games\League of Legends\Config\game.cfg`.  
 `[General]`  
 `EnableReplayApi=1`  
