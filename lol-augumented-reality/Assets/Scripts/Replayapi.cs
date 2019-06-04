@@ -26,7 +26,7 @@ public class Replayapi : MonoBehaviour
         public float y;
         public float z;
     }
-    public float fieldOfView = 40.0f;
+    //public float fieldOfView = 40.0f;
     private class PostCameraData
     {
         public CameraPosition cameraPosition;
@@ -117,7 +117,7 @@ public class Replayapi : MonoBehaviour
         LoLCamera.transform.eulerAngles = new Vector3(camerarotation.y, camerarotation.x, camerarotation.z);
 
         // FOV
-        fieldOfView = Convert.ToSingle(data["fieldOfView"]);
+        var fieldOfView = Convert.ToSingle(data["fieldOfView"]);
         LoLCamera.fieldOfView = fieldOfView;
 
         yield return 0;
@@ -145,7 +145,11 @@ public class Replayapi : MonoBehaviour
         json += JsonUtility.ToJson(cameraRotation);
 
         json += ",\"fieldOfView\":";
-        json += fieldOfView;
+        json += LoLCamera.fieldOfView;
+
+        json += ",\"cameraMode\":";
+        json += "\"fps\"";
+
         json += "}";
 
         Debug.Log("RAW : " + cameraPosition);
