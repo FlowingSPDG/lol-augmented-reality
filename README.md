@@ -1,6 +1,7 @@
 # League of Legends Augumented Reality
 ## LoL Augumented Reality(Proof-of-Concept. WIP)
-## Author : Shugo "FlowingSPDG" Kawamura
+  
+### Author : Shugo "FlowingSPDG" Kawamura
 
 NOTE : You need to enable ReplayAPI by editing `C:\Riot Games\League of Legends\Config\game.cfg`.  
 `[General]`  
