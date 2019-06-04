@@ -9,7 +9,7 @@ using System.Net;
 using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
 using MiniJSON;
-
+using System.Text;
 
 public class Replayapi : MonoBehaviour
 {
@@ -26,12 +26,22 @@ public class Replayapi : MonoBehaviour
         public float y;
         public float z;
     }
+    public float fieldOfView = 40.0f;
+    private class PostCameraData
+    {
+        public CameraPosition cameraPosition;
+        public CameraRotation cameraRotation;
+    }
+
+    const string endpoint = "https://localhost:2999/replay/render";
 
     CameraPosition cameraposition = new CameraPosition();
     CameraRotation camerarotation = new CameraRotation();
 
     [NonSerialized]
-    public GameObject LoLCamera;
+    public Camera LoLCamera;
+
+    public bool OverrideCamera;
 
     // allow un-signed SSL(https)
     private static bool TrustCertificate(object sender, X509Certificate x509Certificate, X509Chain x509Chain, SslPolicyErrors sslPolicyErrors)
@@ -44,22 +54,28 @@ public class Replayapi : MonoBehaviour
     void Start()
     {
         //StartCoroutine(GetCamera());
-        LoLCamera = this.gameObject;
+        LoLCamera = Camera.main;
     }
 
     // Update is called once per frame
     void Update()
     {
-        StartCoroutine(GetCamera());
+        if (OverrideCamera) // allow camera override when its true
+        {
+            StartCoroutine(PostCamera());
+        }
+        else
+        {
+            StartCoroutine(GetCamera());
+        }
     }
 
     IEnumerator GetCamera()
     {
-
         ServicePointManager.ServerCertificateValidationCallback = TrustCertificate;
 
-
-        HttpWebRequest request = (HttpWebRequest)WebRequest.Create("https://localhost:2999/replay/render");
+        HttpWebRequest request = (HttpWebRequest)WebRequest.Create(endpoint);
+        request.Method = "GET";
         HttpWebResponse response = (HttpWebResponse)request.GetResponse();
 
         Stream dataStream = response.GetResponseStream();
@@ -82,7 +98,7 @@ public class Replayapi : MonoBehaviour
         cameraposition.x = Convert.ToSingle(RAW_CameraPosition["x"]);
         cameraposition.y = Convert.ToSingle(RAW_CameraPosition["y"]);
         cameraposition.z = Convert.ToSingle(RAW_CameraPosition["z"]);
-
+        
         Debug.Log("CAMERA Xpos : " + cameraposition.x);
         Debug.Log("CAMERA Ypos : " + cameraposition.y);
         Debug.Log("CAMERA Zpos : " + cameraposition.z);
@@ -99,6 +115,46 @@ public class Replayapi : MonoBehaviour
         Debug.Log("CAMERA Zrot : " + camerarotation.z);
         // Camera rotation has different property between Unity and LoL
         LoLCamera.transform.eulerAngles = new Vector3(camerarotation.y, camerarotation.x, camerarotation.z);
+
+        // FOV
+        fieldOfView = Convert.ToSingle(data["fieldOfView"]);
+        LoLCamera.fieldOfView = fieldOfView;
+
+        yield return 0;
+    }
+
+    IEnumerator PostCamera()
+    {
+        var camerapos = this.LoLCamera.transform.position;
+        var camerarot = this.LoLCamera.transform.rotation;
+
+        CameraPosition cameraPosition = new CameraPosition();
+        cameraPosition.x = camerapos.x;
+        cameraPosition.y = camerapos.y;
+        cameraPosition.z = camerapos.z;
+
+        /*
+        PostCameraData data = new PostCameraData();
+        data.cameraPosition = new CameraPosition();
+        data.cameraRotation = new CameraRotation();
+        
+        data.cameraPosition.x = camerapos.x;
+        data.cameraPosition.y = camerapos.y;
+        data.cameraPosition.z = camerapos.z;
+        data.cameraRotation.x = camerarot.x;
+        data.cameraRotation.y = camerarot.y;
+        data.cameraRotation.z = camerarot.z;
+        */
+        string json = "{cameraPosition:";
+        json += JsonUtility.ToJson(cameraPosition);
+        json += "}";
+        Debug.Log("RAW : " + cameraPosition);
+        Debug.Log("JSON : " + json);
+        WebClient webClient = new WebClient();
+        webClient.Headers[HttpRequestHeader.ContentType] = "application/json;charset=UTF-8";
+        webClient.Headers[HttpRequestHeader.Accept] = "application/json";
+        webClient.Encoding = Encoding.UTF8;
+        string response = webClient.UploadString(new Uri(endpoint), json);
 
         yield return 0;
     }
