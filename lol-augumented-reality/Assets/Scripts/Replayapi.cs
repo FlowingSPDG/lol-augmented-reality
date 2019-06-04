@@ -126,7 +126,7 @@ public class Replayapi : MonoBehaviour
     IEnumerator PostCamera() // testing... A littlebit unstable??
     {
         var camerapos = this.LoLCamera.transform.position;
-        var camerarot = this.LoLCamera.transform.rotation;
+        var camerarot = this.LoLCamera.transform.eulerAngles;
 
         CameraPosition cameraPosition = new CameraPosition();
         cameraPosition.x = camerapos.x;
