@@ -1,6 +1,7 @@
 # League of Legends Augumented Reality
 ## LoL Augumented Reality(Proof-of-Concept. WIP)
-  
+
+### works with Unity 2019.1.3f1
 ### Author : Shugo "FlowingSPDG" Kawamura
 
 Working sample : https://www.youtube.com/watch?v=04IWwbfTpbA&feature=youtu.be  
