@@ -123,7 +123,7 @@ public class Replayapi : MonoBehaviour
         yield return 0;
     }
 
-    IEnumerator PostCamera()
+    IEnumerator PostCamera() // testing... A littlebit unstable??
     {
         var camerapos = this.LoLCamera.transform.position;
         var camerarot = this.LoLCamera.transform.rotation;
@@ -133,21 +133,21 @@ public class Replayapi : MonoBehaviour
         cameraPosition.y = camerapos.y;
         cameraPosition.z = camerapos.z;
 
-        /*
-        PostCameraData data = new PostCameraData();
-        data.cameraPosition = new CameraPosition();
-        data.cameraRotation = new CameraRotation();
-        
-        data.cameraPosition.x = camerapos.x;
-        data.cameraPosition.y = camerapos.y;
-        data.cameraPosition.z = camerapos.z;
-        data.cameraRotation.x = camerarot.x;
-        data.cameraRotation.y = camerarot.y;
-        data.cameraRotation.z = camerarot.z;
-        */
-        string json = "{cameraPosition:";
+        CameraRotation cameraRotation = new CameraRotation();
+        cameraRotation.x = camerarot.y; // XとYが入れ替わっている
+        cameraRotation.y = camerarot.x;
+        cameraRotation.z = camerarot.z;
+
+        string json = "{\"cameraPosition\":";
         json += JsonUtility.ToJson(cameraPosition);
+
+        json += ",\"cameraRotation\":";
+        json += JsonUtility.ToJson(cameraRotation);
+
+        json += ",\"fieldOfView\":";
+        json += fieldOfView;
         json += "}";
+
         Debug.Log("RAW : " + cameraPosition);
         Debug.Log("JSON : " + json);
         WebClient webClient = new WebClient();

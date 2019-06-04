@@ -307,3 +307,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 90a79c711dbc15c4cb7af00cfcbc0fca, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  fieldOfView: 0
+  OverrideCamera: 0
